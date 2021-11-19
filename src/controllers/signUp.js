@@ -1,11 +1,7 @@
-/* eslint-disable consistent-return */
-import bcrypt from 'bcrypt';
 import connection from '../database/database.js';
-import signUpSchema from '../validations/bodyValidations.js';
-
-const selectUsers = 'SELECT * FROM "users"';
-const passwordRules = 'Your password must contain at least 8 characters, 1 upper case letter, 1 lower case letter, 1 number and 1 special character.';
-const CPFRules = 'Your cpf must only contain 11 numbers';
+import { signUpSchema } from '../validations/bodyValidations.js';
+import { createUser } from '../../factories/userFactory.js';
+import { selectUsers, passwordRules, CPFRules } from '../shared/variables.js';
 
 async function signUp(req, res) {
   const isCorrectBody = signUpSchema.validate(req.body);
@@ -33,21 +29,13 @@ async function signUp(req, res) {
       return res.status(409).send(`${cpf} is already registered!`);
     }
 
-    const hashedPassword = bcrypt.hashSync(password, 11);
-    await connection.query(
-      `
-        INSERT INTO "users"
-        (name, email, password, cpf)
-        VALUES ($1, $2, $3, $4);
-      `,
-      [name, email, hashedPassword, cpf],
-    );
+    await createUser(name, email, cpf, password);
 
-    res.sendStatus(201);
+    return res.sendStatus(201);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
 
