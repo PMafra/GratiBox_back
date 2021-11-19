@@ -15,4 +15,13 @@ const signUpSchema = Joi.object()
     cpf: Joi.string().pattern(stringWithOnlyNumbers).length(11),
   });
 
-export default signUpSchema;
+const signInSchema = Joi.object()
+  .length(2)
+  .keys({
+    email: Joi.string()
+      .email()
+      .required(),
+    password: Joi.string().pattern(passwordRegex).required(),
+  });
+
+export { signUpSchema, signInSchema };

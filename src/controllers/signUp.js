@@ -1,7 +1,6 @@
-/* eslint-disable consistent-return */
 import bcrypt from 'bcrypt';
 import connection from '../database/database.js';
-import signUpSchema from '../validations/bodyValidations.js';
+import { signUpSchema } from '../validations/bodyValidations.js';
 
 const selectUsers = 'SELECT * FROM "users"';
 const passwordRules = 'Your password must contain at least 8 characters, 1 upper case letter, 1 lower case letter, 1 number and 1 special character.';
@@ -43,11 +42,11 @@ async function signUp(req, res) {
       [name, email, hashedPassword, cpf],
     );
 
-    res.sendStatus(201);
+    return res.sendStatus(201);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
 
