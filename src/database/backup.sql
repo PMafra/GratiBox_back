@@ -8,10 +8,10 @@ CREATE TABLE "users" (
 ) WITH (
   OIDS=FALSE
 );
-CREATE TABLE "plan_types" (
+CREATE TABLE "plans_types" (
 	"id" serial NOT NULL,
 	"type" varchar(255) NOT NULL,
-	CONSTRAINT "plan_types_pk" PRIMARY KEY ("id")
+	CONSTRAINT "plans_types_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
@@ -30,19 +30,21 @@ CREATE TABLE "products" (
 ) WITH (
   OIDS=FALSE
 );
-CREATE TABLE "Addresses" (
+CREATE TABLE "addresses" (
 	"id" serial NOT NULL,
 	"user_id" integer NOT NULL,
 	"cep" varchar(255) NOT NULL,
 	"number" integer NOT NULL,
 	"complement" varchar(255),
-	CONSTRAINT "Addresses_pk" PRIMARY KEY ("id")
+	CONSTRAINT "addresses_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
 CREATE TABLE "users_plans_products" (
+	"id" serial NOT NULL,
 	"user_plan_id" integer NOT NULL,
-	"product_id" integer NOT NULL
+	"product_id" integer NOT NULL,
+	CONSTRAINT "users_plans_products_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
@@ -54,9 +56,18 @@ CREATE TABLE "users_plans" (
 ) WITH (
   OIDS=FALSE
 );
-ALTER TABLE "plans" ADD CONSTRAINT "plans_fk0" FOREIGN KEY ("plan_type_id") REFERENCES "plan_types"("id");
-ALTER TABLE "Addresses" ADD CONSTRAINT "Addresses_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
+CREATE TABLE "sessions" (
+	"id" serial NOT NULL,
+	"user_id" integer NOT NULL,
+	"token" text NOT NULL,
+	CONSTRAINT "sessions_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+ALTER TABLE "plans" ADD CONSTRAINT "plans_fk0" FOREIGN KEY ("plan_type_id") REFERENCES "plans_types"("id");
+ALTER TABLE "addresses" ADD CONSTRAINT "addresses_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
 ALTER TABLE "users_plans_products" ADD CONSTRAINT "users_plans_products_fk0" FOREIGN KEY ("user_plan_id") REFERENCES "users_plans"("id");
 ALTER TABLE "users_plans_products" ADD CONSTRAINT "users_plans_products_fk1" FOREIGN KEY ("product_id") REFERENCES "products"("id");
 ALTER TABLE "users_plans" ADD CONSTRAINT "users_plans_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
 ALTER TABLE "users_plans" ADD CONSTRAINT "users_plans_fk1" FOREIGN KEY ("plan_id") REFERENCES "plans"("id");
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
