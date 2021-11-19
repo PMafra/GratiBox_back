@@ -5,6 +5,8 @@ import app from '../src/app.js';
 import clearDatabase from '../factories/tableFactory.js';
 import { user, createUser } from '../factories/userFactory.js';
 
+const agent = supertest(app);
+
 beforeEach(async () => {
   await clearDatabase();
 });
@@ -15,7 +17,7 @@ afterAll(() => {
 
 describe('POST /sign-in', () => {
   it('returns 400 for incorrect body', async () => {
-    const result = await supertest(app)
+    const result = await agent
       .post('/sign-in')
       .send({
         email: user.email,
@@ -24,7 +26,7 @@ describe('POST /sign-in', () => {
   });
 
   it('returns 404 for email not registered', async () => {
-    const result = await supertest(app)
+    const result = await agent
       .post('/sign-in')
       .send({
         email: user.email,
@@ -36,7 +38,7 @@ describe('POST /sign-in', () => {
   it('returns 401 for wrong password', async () => {
     await createUser(user.name, user.email, user.cpf, user.password);
 
-    const result = await supertest(app)
+    const result = await agent
       .post('/sign-in')
       .send({
         email: user.email,
@@ -48,7 +50,7 @@ describe('POST /sign-in', () => {
   it('returns 200 for sign-in sucess', async () => {
     await createUser(user.name, user.email, user.cpf, user.password);
 
-    const result = await supertest(app)
+    const result = await agent
       .post('/sign-in')
       .send({
         email: user.email,

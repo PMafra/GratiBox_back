@@ -1,12 +1,12 @@
 import faker from 'faker';
 import bcrypt from 'bcrypt';
-import { generate as generateCPF } from 'gerador-validador-cpf';
+import { generate } from 'gerador-validador-cpf';
 import connection from '../src/database/database.js';
 
 const user = {
   name: faker.name.findName(),
   email: faker.internet.email(),
-  cpf: generateCPF(),
+  cpf: generate(),
   password: 'GratiBox123@',
 };
 

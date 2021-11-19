@@ -3,10 +3,8 @@ import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import connection from '../database/database.js';
 import { signInSchema } from '../validations/bodyValidations.js';
-
-const selectUser = 'SELECT * FROM "users" WHERE email = $1';
-const passwordRules = 'Your password must contain at least 8 characters, 1 upper case letter, 1 lower case letter, 1 number and 1 special character.';
-const incorrectInputMessage = 'Email or password is invalid!';
+import createSession from '../../factories/sessionFactory.js';
+import { selectUsers, passwordRules, incorrectInputMessage } from '../shared/variables.js';
 
 async function signIn(req, res) {
   const isCorrectBody = signInSchema.validate(req.body);
@@ -23,7 +21,7 @@ async function signIn(req, res) {
   } = req.body;
 
   try {
-    const usersTable = await connection.query(selectUser, [email]);
+    const usersTable = await connection.query(`${selectUsers} WHERE email = $1`, [email]);
 
     if (usersTable.rowCount === 0) {
       return res.status(404).send(incorrectInputMessage);
@@ -40,11 +38,7 @@ async function signIn(req, res) {
     }
 
     const token = uuid();
-
-    await connection.query(`
-        INSERT INTO "sessions" ("user_id", token)
-        VALUES ($1, $2)
-    `, [userId, token]);
+    createSession(userId, token);
 
     return res.send({ token, name });
   } catch (err) {
