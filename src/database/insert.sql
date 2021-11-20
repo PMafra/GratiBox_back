@@ -1,0 +1,11 @@
+INSERT INTO products (name) VALUES ('Chás');
+INSERT INTO products (name) VALUES ('Insensos');
+INSERT INTO products (name) VALUES ('Produtos orgânicos');
+INSERT INTO "plans_types" (type) VALUES ('Weekly');
+INSERT INTO "plans_types" (type) VALUES ('Monthly');
+INSERT INTO plans (plan_type_id, day) VALUES (1, 'Monday');
+INSERT INTO plans (plan_type_id, day) VALUES (1, 'Wednesday');
+INSERT INTO plans (plan_type_id, day) VALUES (1, 'Friday');
+INSERT INTO plans (plan_type_id, day) VALUES (2, '1');
+INSERT INTO plans (plan_type_id, day) VALUES (2, '10');
+INSERT INTO plans (plan_type_id, day) VALUES (2, '20');

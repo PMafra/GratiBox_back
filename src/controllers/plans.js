@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import connection from '../database/database.js';
 
 async function getPlan(req, res) {
@@ -16,7 +17,8 @@ async function getPlan(req, res) {
       return res.status(403).send('Your session token has expired or you haven`t logged in yet!');
     }
 
-    const userId = obtainUserId.rowCount[0].id;
+    const userId = obtainUserId.rows[0].id;
+    console.log(userId);
 
     const obtainUserPlan = await connection.query(`
         SELECT "plans".day, "plans_types".type FROM "plans_types"
@@ -28,10 +30,10 @@ async function getPlan(req, res) {
     `, [userId]);
 
     if (obtainUserPlan.rowCount === 0) {
-      return res.status(204).send('You haven`t signed up for any plans yet.');
+      return res.sendStatus(204);
     }
 
-    const { planDay, planType } = obtainUserPlan.rows[0];
+    const { day: planDay, type: planType } = obtainUserPlan.rows[0];
 
     const obtainUserProducts = await connection.query(`
         SELECT "products".* FROM "products"
