@@ -21,7 +21,7 @@ async function getPlan(req, res) {
     console.log(userId);
 
     const obtainUserPlan = await connection.query(`
-        SELECT "plans".day, "plans_types".type FROM "plans_types"
+        SELECT "plans".day, "plans_types".type, "users_plans".id, "users_plans".signature_date FROM "plans_types"
         JOIN "plans"
             ON "plans".plan_type_id = "plans_types".id
         JOIN "users_plans"
@@ -33,7 +33,9 @@ async function getPlan(req, res) {
       return res.sendStatus(204);
     }
 
-    const { day: planDay, type: planType } = obtainUserPlan.rows[0];
+    const {
+      day: planDay, type: planType, id, signature_date: signatureDate,
+    } = obtainUserPlan.rows[0];
 
     const obtainUserProducts = await connection.query(`
         SELECT "products".* FROM "products"
@@ -46,7 +48,9 @@ async function getPlan(req, res) {
 
     const userProducts = obtainUserProducts.rows;
 
-    return res.send({ userProducts, planDay, planType });
+    return res.send({
+      id, planDay, planType, signatureDate, userProducts,
+    });
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
