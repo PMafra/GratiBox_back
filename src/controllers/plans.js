@@ -120,7 +120,6 @@ async function addPlanSubscription(req, res) {
     }
 
     const userPlanId = obtainUserPlanId.rows[0].id;
-
     for (let i = 0; i < plan.products.length; i++) {
       const obtainProductId = await connection.query(`
         SELECT * FROM "products"

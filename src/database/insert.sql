@@ -1,5 +1,5 @@
 INSERT INTO products (name) VALUES ('Teas');
-INSERT INTO products (name) VALUES ('Insence');
+INSERT INTO products (name) VALUES ('Incense');
 INSERT INTO products (name) VALUES ('Organic products');
 INSERT INTO "plans_types" (type) VALUES ('Weekly');
 INSERT INTO "plans_types" (type) VALUES ('Monthly');
