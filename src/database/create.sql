@@ -33,9 +33,11 @@ CREATE TABLE "products" (
 CREATE TABLE "addresses" (
 	"id" serial NOT NULL,
 	"user_id" integer NOT NULL,
-	"cep" varchar(255) NOT NULL,
-	"number" integer NOT NULL,
-	"complement" varchar(255),
+	"full_name" text NOT NULL,
+	"cep" varchar(8) NOT NULL,
+	"address" text NOT NULL,
+	"city" varchar(255) NOT NULL,
+	"state" varchar(255) NOT NULL
 	CONSTRAINT "addresses_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

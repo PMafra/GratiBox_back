@@ -58,4 +58,31 @@ async function getPlan(req, res) {
   }
 }
 
-export default getPlan;
+async function addPlanSubscription(req, res) {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).send('You are not authorized to see this content. Please try signing in.');
+
+  try {
+    const obtainUserId = await connection.query(`
+        SELECT "users".id from "users"
+        JOIN "sessions"
+            ON "sessions".user_id = "users".id
+        WHERE "sessions".token = $1;
+    `, [token]);
+
+    if (obtainUserId.rowCount === 0) {
+      return res.status(403).send('Your session token has expired or you haven`t logged in yet!');
+    }
+
+    const userId = obtainUserId.rows[0].id;
+    console.log(userId);
+
+    return res.sendStatus(201);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log(err);
+    return res.sendStatus(500);
+  }
+}
+
+export { getPlan, addPlanSubscription };
