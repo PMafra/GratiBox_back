@@ -37,7 +37,7 @@ CREATE TABLE "addresses" (
 	"cep" varchar(8) NOT NULL,
 	"address" text NOT NULL,
 	"city" varchar(255) NOT NULL,
-	"state" varchar(255) NOT NULL
+	"state" varchar(255) NOT NULL,
 	CONSTRAINT "addresses_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

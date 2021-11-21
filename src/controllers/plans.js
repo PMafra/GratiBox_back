@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-plusplus */
 /* eslint-disable no-console */
 import connection from '../database/database.js';
 
@@ -18,7 +20,6 @@ async function getPlan(req, res) {
     }
 
     const userId = obtainUserId.rows[0].id;
-    console.log(userId);
 
     const obtainUserPlan = await connection.query(`
         SELECT "plans".day, "plans_types".type, "users_plans".id, "users_plans".signature_date FROM "plans_types"
@@ -62,7 +63,14 @@ async function addPlanSubscription(req, res) {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).send('You are not authorized to see this content. Please try signing in.');
 
+  const {
+    plan,
+    address,
+  } = req.body;
+
   try {
+    // OBTAINING USER ID
+
     const obtainUserId = await connection.query(`
         SELECT "users".id from "users"
         JOIN "sessions"
@@ -75,7 +83,68 @@ async function addPlanSubscription(req, res) {
     }
 
     const userId = obtainUserId.rows[0].id;
-    console.log(userId);
+
+    // USER PLAN
+
+    const obtainPlanId = await connection.query(`
+      SELECT "plans".id from "plans"
+      JOIN "plans_types"
+          ON "plans_types".id = "plans".plan_type_id
+      WHERE "plans".day ILIKE $1
+        AND "plans_types".type ILIKE $2;
+    `, [plan.planDay, plan.planType]);
+
+    if (obtainPlanId.rowCount === 0) {
+      return res.sendStatus(404);
+    }
+
+    const planId = obtainPlanId.rows[0].id;
+
+    await connection.query(`
+      INSERT INTO "users_plans"
+        (user_id, plan_id, signature_date) 
+      VALUES 
+        ($1, $2, NOW());
+    `, [userId, planId]);
+
+    // INSERTING USER PLAN PRODUCTS
+
+    const obtainUserPlanId = await connection.query(`
+      SELECT * FROM "users_plans"
+      WHERE "user_id" = $1
+        AND "plan_id" = $2;
+    `, [userId, planId]);
+
+    if (obtainUserPlanId.rowCount === 0) {
+      return res.sendStatus(404);
+    }
+
+    const userPlanId = obtainUserPlanId.rows[0].id;
+
+    for (let i = 0; i < plan.products.length; i++) {
+      const obtainProductId = await connection.query(`
+        SELECT * FROM "products"
+        WHERE name ILIKE $1;
+      `, [plan.products[i]]);
+
+      const productId = obtainProductId.rows[0].id;
+
+      await connection.query(`
+        INSERT INTO "users_plans_products"
+          (user_plan_id, product_id) 
+        VALUES 
+          ($1, $2);
+      `, [userPlanId, productId]);
+    }
+
+    // INSERTING USER ADDRESS
+
+    await connection.query(`
+      INSERT INTO "addresses"
+        (user_id, full_name, cep, address, city, state) 
+      VALUES 
+        ($1, $2, $3, $4, $5, $6);
+    `, [userId, address.fullName, address.cep, address.address, address.city, address.state]);
 
     return res.sendStatus(201);
   } catch (err) {
