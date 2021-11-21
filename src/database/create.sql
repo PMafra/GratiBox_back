@@ -52,6 +52,7 @@ CREATE TABLE "users_plans" (
 	"id" serial NOT NULL,
 	"user_id" integer NOT NULL,
 	"plan_id" integer NOT NULL,
+	"signature_date" DATE NOT NULL DEFAULT NOW(),
 	CONSTRAINT "users_plans_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
