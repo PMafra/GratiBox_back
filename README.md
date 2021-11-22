@@ -49,7 +49,7 @@ mkdir gratibox
 ```sh
 git clone https://github.com/PMafra/GratiBox_back.git
 ```
-3. Install NPM packages for the front-end repo
+3. Install NPM packages for the back-end repo
 ```sh
 npm install
 ```
@@ -57,7 +57,7 @@ npm install
 ```sh
 git clone https://github.com/PMafra/GratiBox_front.git
 ```
-5. Install NPM packages for the back-end repo
+5. Install NPM packages for the front-end repo
 ```sh
 npm install
 ```
