@@ -38,7 +38,7 @@ async function signIn(req, res) {
     }
 
     const token = uuid();
-    createSession(userId, token);
+    await createSession(userId, token);
 
     return res.send({ token, name });
   } catch (err) {
