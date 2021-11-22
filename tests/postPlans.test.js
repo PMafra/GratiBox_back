@@ -24,6 +24,35 @@ describe('POST /plans', () => {
     expect(result.status).toEqual(401);
   });
 
+  it('returns 400 for wrong body', async () => {
+    const userEmail = user.email;
+    const token = uuid();
+    await createUser(user.name, userEmail, user.cpf, user.password);
+    const obtainUserId = await connection.query(`
+        ${selectUsers} WHERE email = $1;
+    `, [userEmail]);
+    const userId = obtainUserId.rows[0].id;
+    await createSession(userId, token);
+
+    const result = await agent
+      .post('/plans')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        plan: {
+          planType: 'nothing',
+          planDay: 'nothing',
+        },
+        address: {
+          fullName: 'Pedro Gratibox',
+          cep: '12345678',
+          address: 'Rio Street 120',
+          city: 'Rio',
+          state: 'RJ',
+        },
+      });
+    expect(result.status).toEqual(400);
+  });
+
   it('returns 403 for wrong token', async () => {
     const result = await agent
       .post('/plans')

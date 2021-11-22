@@ -24,4 +24,21 @@ const signInSchema = Joi.object()
     password: Joi.string().pattern(passwordRegex).required(),
   });
 
-export { signUpSchema, signInSchema };
+const planSchema = Joi.object()
+  .length(2)
+  .keys({
+    plan: Joi.object().length(3).keys({
+      planType: Joi.string().required(),
+      planDay: Joi.string().required(),
+      products: Joi.array(),
+    }),
+    address: Joi.object().length(5).keys({
+      fullName: Joi.string().required(),
+      cep: Joi.string().length(8).required(),
+      address: Joi.string().required(),
+      city: Joi.string().required(),
+      state: Joi.string().required(),
+    }),
+  });
+
+export { signUpSchema, signInSchema, planSchema };
