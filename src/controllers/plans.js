@@ -5,7 +5,6 @@ import connection from '../database/database.js';
 
 async function getPlan(req, res) {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token) return res.status(401).send('You are not authorized to see this content. Please try signing in.');
 
   try {
     const obtainUserId = await connection.query(`
@@ -61,7 +60,6 @@ async function getPlan(req, res) {
 
 async function addPlanSubscription(req, res) {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token) return res.status(401).send('You are not authorized to see this content. Please try signing in.');
 
   const {
     plan,
