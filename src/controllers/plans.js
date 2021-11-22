@@ -2,6 +2,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-console */
 import connection from '../database/database.js';
+import { planSchema } from '../validations/bodyValidations.js';
 
 async function getPlan(req, res) {
   const token = req.headers.authorization?.replace('Bearer ', '');
@@ -60,6 +61,11 @@ async function getPlan(req, res) {
 
 async function addPlanSubscription(req, res) {
   const token = req.headers.authorization?.replace('Bearer ', '');
+
+  const isCorrectBody = planSchema.validate(req.body);
+  if (isCorrectBody.error) {
+    return res.status(400).send(isCorrectBody.error.details[0].message);
+  }
 
   const {
     plan,
