@@ -10,7 +10,6 @@ const agent = supertest(app);
 beforeEach(async () => {
   await clearDatabase();
 });
-
 afterAll(() => {
   connection.end();
 });

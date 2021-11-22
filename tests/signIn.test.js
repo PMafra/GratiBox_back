@@ -10,7 +10,6 @@ const agent = supertest(app);
 beforeEach(async () => {
   await clearDatabase();
 });
-
 afterAll(() => {
   connection.end();
 });
@@ -36,25 +35,28 @@ describe('POST /sign-in', () => {
   });
 
   it('returns 401 for wrong password', async () => {
-    await createUser(user.name, user.email, user.cpf, user.password);
+    const userEmail = user.email;
+    await createUser(user.name, userEmail, user.cpf, user.password);
 
     const result = await agent
       .post('/sign-in')
       .send({
-        email: user.email,
+        email: userEmail,
         password: 'NotBookland123@',
       });
     expect(result.status).toEqual(401);
   });
 
   it('returns 200 for sign-in sucess', async () => {
-    await createUser(user.name, user.email, user.cpf, user.password);
+    const userEmail = user.email;
+    const userPassword = user.password;
+    await createUser(user.name, userEmail, user.cpf, userPassword);
 
     const result = await agent
       .post('/sign-in')
       .send({
-        email: user.email,
-        password: user.password,
+        email: userEmail,
+        password: userPassword,
       });
     expect(result.status).toEqual(200);
   });
